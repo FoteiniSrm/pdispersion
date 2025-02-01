@@ -1,5 +1,6 @@
 import pyomo.environ as pyomo
 import numpy as np
+import time
 
 # Create a function that reads data from a file
 def read_data(filename):
@@ -47,7 +48,7 @@ def read_data(filename):
 
 
 # Read data from a file
-P,F,points,binaryConstraint,fp_sp_distances,fpEucDistances = read_data("500_20/0.txt")
+P,F,points,binaryConstraint,fp_sp_distances,fpEucDistances = read_data("25_3_test.txt")
 
 # Create a concrete model
 model = pyomo.ConcreteModel()
@@ -140,8 +141,9 @@ model.objective = pyomo.Objective(sense = pyomo.maximize, expr = model.b)
 solver = pyomo.SolverFactory('gurobi')
 
 # Solve/Model the model
+start = time.time()
 result = solver.solve(model)
-
+end = time.time()
 # Print results 
 print(result)
 print("Print values for all variables")
@@ -150,3 +152,6 @@ print("Print values for all variables")
 for v in model.component_data_objects(pyomo.Var):
   print(str(v), v.value)
 print(f"Objective value = {pyomo.value(model.objective)}")
+print(f"Time Elapsed: {end - start}")
+
+    
