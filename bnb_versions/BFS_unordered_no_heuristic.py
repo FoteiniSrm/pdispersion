@@ -157,14 +157,9 @@ def branch_and_bound(yi_order, P, F, binaryConstraint, fpEucDistances, max_dista
 
     # check if all variables have integer values (from the ones that are supposed to be integers).
     # If not, then select the first in order variable with a fractional value to be the one fixed.
-    # If the non integer is a decision variable pick the most appopriate one fom the yi_order
     vars_have_integer_vals = True
     for idx, is_int_var in enumerate(integer_var):
-        if is_int_var and idx < len(yi_order) and not is_nearly_integer(x_candidate[yi_order[idx]]):
-            vars_have_integer_vals = False
-            selected_var_idx = yi_order[idx]
-            break
-        elif is_int_var and idx > len(yi_order) and not is_nearly_integer(x_candidate[idx]):                   
+        if is_int_var and not is_nearly_integer(x_candidate[idx]):                   
             vars_have_integer_vals = False
             selected_var_idx = idx
             break
@@ -185,8 +180,8 @@ def branch_and_bound(yi_order, P, F, binaryConstraint, fpEucDistances, max_dista
         debug_print(node=root_node, x_obj=x_obj, sol_status="Fractional")
 
     # Call the heuristic function
-    status, solution, cost = heur.random_multiple_runs_heuristic(10, 10000, P, F, fpEucDistances, binaryConstraint)
-
+    # status, solution, cost = heur.random_multiple_runs_heuristic(10, 10000, P, F, fpEucDistances, binaryConstraint)
+    cost = -np.inf
 
     # Retrieve vbasis and cbasis
     vbasis = model.getAttr("VBasis", model.getVars())
@@ -247,11 +242,7 @@ def branch_and_bound(yi_order, P, F, binaryConstraint, fpEucDistances, max_dista
         # check if all variables have integer values (from the ones that are supposed to be integers)
         vars_have_integer_vals = True
         for idx, is_int_var in enumerate(integer_var):
-            if is_int_var and idx < len(yi_order) and not is_nearly_integer(x_candidate[yi_order[idx]]):
-                vars_have_integer_vals = False
-                selected_var_idx = yi_order[idx]
-                break
-            elif is_int_var and idx > len(yi_order) and not is_nearly_integer(x_candidate[idx]):                   
+            if is_int_var and not is_nearly_integer(x_candidate[idx]):                   
                 vars_have_integer_vals = False
                 selected_var_idx = idx
                 break
@@ -364,7 +355,7 @@ if __name__ == "__main__":
 
     print("************************    Initializing structures...    ************************")
 
-    P, F, binaryConstraint, fpEucDistances, model, yi_order, max_distance, ub, lb, integer_var, num_vars, c = pr.pdispersion("test_inputs/25_3_test.txt")
+    P, F, binaryConstraint, fpEucDistances, model, yi_order, max_distance, ub, lb, integer_var, num_vars, c = pr.pdispersion("25_3_test.txt")
 
     # Initialize structures
     # A flag for possible objVals that appear for each depth (possible objVals are less orr equal to the max_distance between any two variables)
@@ -383,7 +374,7 @@ if __name__ == "__main__":
     # Start solving
     print("************************    Solving problem...    ************************")
     start = time.time()
-    solutions, nodes = branch_and_bound(yi_order, P, F, binaryConstraint, fpEucDistances, max_distance, model, ub, lb, integer_var, best_bound_per_depth, found_pos_sol, nodes_per_depth, depth=0)
+    solutions, nodes = branch_and_bound(yi_order, P, F, binaryConstraint, fpEucDistances, max_distance, model, ub, lb, integer_var, best_bound_per_depth, found_pos_sol, nodes_per_depth)
     end = time.time()
 
     if DEBUG_MODE:

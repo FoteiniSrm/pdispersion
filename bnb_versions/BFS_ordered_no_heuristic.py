@@ -184,9 +184,9 @@ def branch_and_bound(yi_order, P, F, binaryConstraint, fpEucDistances, max_dista
     if DEBUG_MODE:
         debug_print(node=root_node, x_obj=x_obj, sol_status="Fractional")
 
-    # Call the heuristic function
-    status, solution, cost = heur.random_multiple_runs_heuristic(10, 10000, P, F, fpEucDistances, binaryConstraint)
-
+    # # Call the heuristic function
+    # status, solution, cost = heur.random_multiple_runs_heuristic(10, 10000, P, F, fpEucDistances, binaryConstraint)
+    cost = -np.inf
 
     # Retrieve vbasis and cbasis
     vbasis = model.getAttr("VBasis", model.getVars())
@@ -364,7 +364,7 @@ if __name__ == "__main__":
 
     print("************************    Initializing structures...    ************************")
 
-    P, F, binaryConstraint, fpEucDistances, model, yi_order, max_distance, ub, lb, integer_var, num_vars, c = pr.pdispersion("test_inputs/25_3_test.txt")
+    P, F, binaryConstraint, fpEucDistances, model, yi_order, max_distance, ub, lb, integer_var, num_vars, c = pr.pdispersion("25_3_test.txt")
 
     # Initialize structures
     # A flag for possible objVals that appear for each depth (possible objVals are less orr equal to the max_distance between any two variables)
@@ -383,7 +383,7 @@ if __name__ == "__main__":
     # Start solving
     print("************************    Solving problem...    ************************")
     start = time.time()
-    solutions, nodes = branch_and_bound(yi_order, P, F, binaryConstraint, fpEucDistances, max_distance, model, ub, lb, integer_var, best_bound_per_depth, found_pos_sol, nodes_per_depth, depth=0)
+    solutions, nodes = branch_and_bound(yi_order, P, F, binaryConstraint, fpEucDistances, max_distance, model, ub, lb, integer_var, best_bound_per_depth, found_pos_sol, nodes_per_depth)
     end = time.time()
 
     if DEBUG_MODE:
